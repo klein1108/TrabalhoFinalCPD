@@ -1,11 +1,9 @@
-#include <iostream>
-#include "../parser-master/parser.hpp"
-
-using namespace aria::csv;
+#include "headers/fileService.hpp"
 
 using namespace std;
+using namespace aria::csv;
 
-int main() {
-  std::ifstream f("../datas/dados-pequeno/miniratings.csv");
-  CsvParser parser(f);
+int main(){
+  printAllFileDataByName("./datas/dados-pequeno/miniratings.csv");
+  return 0;
 }
