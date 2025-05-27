@@ -1,2 +1,5 @@
 # TrabalhoFinalCPD
-Classificac¸ao e Pesquisa de Dados - Trabalho Final
+Classificação e Pesquisa de Dados - Trabalho Final
+
+  ## Terminal
+    g++ src/main.cpp src/service/*.cpp -o programa
