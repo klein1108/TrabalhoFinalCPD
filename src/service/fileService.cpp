@@ -1,8 +1,5 @@
 #include "../headers/fileService.hpp"
 
-using namespace std;
-using namespace aria::csv;
-
 void printAllFileDataByName(char fileName[]){ 
   ifstream f(fileName);
   CsvParser parser(f);

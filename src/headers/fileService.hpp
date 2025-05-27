@@ -4,8 +4,8 @@
 #include <iostream>
 #include "../../parser-master/parser.hpp"
 
-// using namespace std;
-// using namespace aria::csv;
+using namespace std;
+using namespace aria::csv;
 
 void printAllFileDataByName(char fileName[]);
 
