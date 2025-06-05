@@ -95,12 +95,6 @@ vector<Review> setAllReviewsFromFileToVector(){
   return response;
 }
 
-// void setHashTableMovieRatings(vector<unique_ptr<MovieHash>>& hashTable){
-//   ifstream f(MOVIE_FILE_SMALL_DATA);
-//   CsvParser parser(f);
-
-// }
-
 
 void printAllFileDataByName(char fileName[]){
   ifstream f(fileName);
