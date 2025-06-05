@@ -6,6 +6,14 @@
 
 //FILES
 #define MOVIE_FILE_SMALL_DATA "./datas/dados-pequeno/movies.csv"
+#define MINIRATINGS_FILE_SMALL_DATA "./datas/dados-pequeno/miniratings.csv"
+#define RATINGS_FILE_SMALL_DATA "./datas/dados-pequeno/ratings.csv"
+#define TAGS_FILE_SMALL_DATA "./datas/dados-pequeno/tags.csv"
+
+#define MOVIE_FILE_BIG_DATA "./datas/dados-completo/movies.csv"
+#define MINIRATINGS_FILE_BIG_DATA "./datas/dados-completo/miniratings.csv"
+#define RATINGS_FILE_BIG_DATA "./datas/dados-completo/ratings.csv"
+#define TAGS_FILE_BIG_DATA "./datas/dados-completo/tags.csv"
 
 //UTILS
 #define GENRES_SEPARATION "|"
@@ -23,15 +31,23 @@ typedef struct typeMovie{
   int year;
 } Movie;
 
+typedef struct typeReview{
+  int userId;
+  int movieId;
+  float rating;
+  string date;
+
+} Review;
+
 typedef struct typeMovieHash{
   int movieId;
   string title;
   vector<string> genres;
   int year;
 
-  int rate;
-  int rateCounting;
-  int rateSum;
+  int rating;
+  int ratingCounting;
+  int ratingSum;
 
   struct typeMovieHash *next;
 
