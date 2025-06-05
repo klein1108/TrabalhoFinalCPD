@@ -7,7 +7,9 @@ int main(){
   vector<Movie> allMoviesFromFile = setAllMoviesFromFileToVector();
   vector<unique_ptr<MovieHash>> moviesHashTable = createMoviesHashTable(allMoviesFromFile);
 
-  cout << "MOVIES HASH TABLE SIZE: " << moviesHashTable.size() << endl; 
+  vector<Review> allReviewsFromFile = setAllReviewsFromFileToVector();
+
+  
 
   return 0;
 }

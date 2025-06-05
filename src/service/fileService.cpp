@@ -11,13 +11,13 @@ vector<Movie> setAllMoviesFromFileToVector(){
 
   //REMOVE FIRST LINE
   int NUM_WORDS_TO_REMOVE = 4;
-  int end = true;
+  int isEnd = false;
   auto field = parser.next_field();
   for(int i = 0; i < NUM_WORDS_TO_REMOVE; i++){
     field = parser.next_field();
   }
 
-  while(end) {
+  while(!isEnd) {
     Movie movie;
     field = parser.next_field();
       switch (field.type) {
@@ -38,7 +38,7 @@ vector<Movie> setAllMoviesFromFileToVector(){
             movieCounting++;
           break;
         case FieldType::CSV_END: 
-          end = false;
+        isEnd = true;
       }
   }
 
@@ -46,6 +46,61 @@ vector<Movie> setAllMoviesFromFileToVector(){
   
   return response;
 }
+
+vector<Review> setAllReviewsFromFileToVector(){
+  ifstream f(MINIRATINGS_FILE_SMALL_DATA);
+  CsvParser parser(f);
+
+  vector<Review> response;
+
+  int allRatingCounting = 0;
+
+  //REMOVE FIRST LINE
+  int NUM_WORDS_TO_REMOVE = 4;
+
+  int isEnd = false;
+
+  auto field = parser.next_field();
+  for(int i = 0; i < NUM_WORDS_TO_REMOVE; i++){
+    field = parser.next_field();
+  }
+
+  while(!isEnd) {
+    Review review;
+    field = parser.next_field();
+      switch (field.type) {
+        case FieldType::DATA:
+            review.userId = stoi(field.data);
+            field = parser.next_field();
+
+            review.movieId = stoi(field.data);
+            field = parser.next_field();
+
+            review.rating = stof(field.data);
+            field = parser.next_field();
+
+            review.date = field.data;
+
+            response.push_back(review);
+            allRatingCounting++;
+          break;
+
+        case FieldType::CSV_END: 
+        isEnd = true;
+      }
+  }
+
+  cout << "Succeeded mapping all the " << allRatingCounting << " ratings from file!" << endl;
+
+  return response;
+}
+
+// void setHashTableMovieRatings(vector<unique_ptr<MovieHash>>& hashTable){
+//   ifstream f(MOVIE_FILE_SMALL_DATA);
+//   CsvParser parser(f);
+
+// }
+
 
 void printAllFileDataByName(char fileName[]){
   ifstream f(fileName);

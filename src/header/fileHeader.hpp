@@ -9,7 +9,9 @@ using namespace aria::csv;
 
 void printAllFileDataByName(char fileName[]);
 vector<Movie> setAllMoviesFromFileToVector();
+vector<Review> setAllReviewsFromFileToVector();
 vector<string> splitStringIntoNewVectorBySeparator(string s, string delimiter);
+
 
 
 #endif
