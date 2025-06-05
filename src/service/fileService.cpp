@@ -1,10 +1,11 @@
-#include "../headers/fileService.hpp"
+#include "../header/fileHeader.hpp"
+#include "../header/constants.hpp"
 
-vector<MovieHash> setAllMoviesFromFileToVector(){ 
+vector<Movie> setAllMoviesFromFileToVector(){ 
   ifstream f(MOVIE_FILE_SMALL_DATA);
   CsvParser parser(f);
 
-  vector<MovieHash> response;
+  vector<Movie> response;
 
   int movieCounting = 0;
 
@@ -17,7 +18,7 @@ vector<MovieHash> setAllMoviesFromFileToVector(){
   }
 
   while(end) {
-    MovieHash movie;
+    Movie movie;
     field = parser.next_field();
       switch (field.type) {
         case FieldType::DATA:
@@ -32,10 +33,9 @@ vector<MovieHash> setAllMoviesFromFileToVector(){
             field = parser.next_field();
 
             movie.year = stoi(field.data);
-          break;
-        case FieldType::ROW_END:
-          response.push_back(movie);
-          movieCounting++;
+
+            response.push_back(movie);
+            movieCounting++;
           break;
         case FieldType::CSV_END: 
           end = false;
