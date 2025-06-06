@@ -47,8 +47,9 @@ vector<Movie> setAllMoviesFromFileToVector(){
   return response;
 }
 
-vector<Review> setAllReviewsFromFileToVector(){
-  ifstream f(MINIRATINGS_FILE_SMALL_DATA);
+vector<Review> setAllReviewsFromFileToVectorAndHandleRatings(vector<unique_ptr<MovieHash>>& hashTable){
+  // ifstream f(MINIRATINGS_FILE_SMALL_DATA);
+  ifstream f(RATINGS_FILE_BIG_DATA);
   CsvParser parser(f);
 
   vector<Review> response;
@@ -82,6 +83,9 @@ vector<Review> setAllReviewsFromFileToVector(){
             review.date = field.data;
 
             response.push_back(review);
+
+            increaseHashMovieRatingValues(review, hashTable);
+
             allRatingCounting++;
           break;
 
@@ -93,6 +97,31 @@ vector<Review> setAllReviewsFromFileToVector(){
   cout << "Succeeded mapping all the " << allRatingCounting << " ratings from file!" << endl;
 
   return response;
+}
+
+void setMovieHashTableRatingsBySumPerCounting(vector<unique_ptr<MovieHash>>& hashTable){
+  for(int i = 0; i < hashTable.size(); i++){
+    if(hashTable.at(i) && hashTable.at(i)->movieInfo.count > 0){
+      hashTable.at(i)->movieInfo.rating = (float) hashTable.at(i)->movieInfo.globalRating / hashTable.at(i)->movieInfo.count;
+    }
+  }
+}
+
+void increaseHashMovieRatingValues(Review review, vector<unique_ptr<MovieHash>>& hashTable){
+  int module = (int)review.movieId % MAX_MOVIE_HASH;
+  
+  MovieHash* current = hashTable[module].get();
+
+
+  while (current != nullptr && current->movieInfo.movieId != review.movieId) {
+    current = current->next;
+  }
+  
+  if (current != nullptr) {
+    current->movieInfo.globalRating += review.rating;
+    current->movieInfo.count++;
+  }
+
 }
 
 

@@ -3,6 +3,9 @@
 
 #include <vector>
 #include <string>
+#include <memory>
+#include <chrono>
+#include <unordered_map>
 
 //FILES
 #define MOVIE_FILE_SMALL_DATA "./datas/dados-pequeno/movies.csv"
@@ -39,16 +42,27 @@ typedef struct typeReview{
 
 } Review;
 
-typedef struct typeMovieHash{
+
+typedef struct typeMovieInfo{
   int movieId;
   string title;
   vector<string> genres;
   int year;
 
-  int rating;
-  int ratingCounting;
-  int ratingSum;
+  float rating;
+  int count;
+  float globalRating;
+} MovieInfo;
 
+typedef struct typeUserReviewHash{
+  struct typeReview review;
+  struct typeMovieInfo movieInfo;
+  struct typeUserReviewHash *next;
+
+} UserReviewHash;
+
+typedef struct typeMovieHash{
+  struct typeMovieInfo movieInfo;
   struct typeMovieHash *next;
 
 } MovieHash;
