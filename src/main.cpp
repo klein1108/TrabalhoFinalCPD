@@ -1,5 +1,6 @@
 #include "header/fileHeader.hpp"
 #include "header/hashHeader.hpp"
+#include "header/searchHeader.hpp"
 #include "header/constants.hpp"
 
 int main(){
@@ -12,11 +13,13 @@ int main(){
   
   vector<Movie> allMoviesFromFile = setAllMoviesFromFileToVector(moviesHashTable);
   
-  vector<Review> allReviewsFromFile = setAllReviewsFromFileToVector();
+  vector<User> allUsersFromFile = setAllReviewsFromFileToVector();
 
   auto end = chrono::high_resolution_clock::now(); // End timer
   chrono::duration<double> elapsed = end - start;
   cout << "Execution time: " << elapsed.count() << " seconds" << endl;
+
+  printUserById(allUsersFromFile, 1);
 
   return 0;
 }

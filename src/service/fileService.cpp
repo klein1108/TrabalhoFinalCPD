@@ -49,74 +49,66 @@ vector<Movie> setAllMoviesFromFileToVector(vector<unique_ptr<MovieHash>>& movies
   return response;
 }
 
-vector<Review> setAllReviewsFromFileToVector(){
-  ifstream f(MINIRATINGS_FILE_BIG_DATA);
-  CsvParser parser(f);
+vector<User> setAllReviewsFromFileToVector() {
+    ifstream f(RATINGS_FILE_BIG_DATA);
+    CsvParser parser(f);
 
-  vector<Review> response;
+    vector<User> response;
+    int allRatingCounting = 0;
 
-  int allRatingCounting = 0;
-
-  //REMOVE FIRST LINE
-  int NUM_WORDS_TO_REMOVE = 4;
-
-  int isEnd = false;
-
-  auto field = parser.next_field();
-  for(int i = 0; i < NUM_WORDS_TO_REMOVE; i++){
-    field = parser.next_field();
-  }
-
-  while(!isEnd) {
-    Review review;
-    field = parser.next_field();
-      switch (field.type) {
-        case FieldType::DATA:
-            review.userId = stoi(field.data);
-            field = parser.next_field();
-
-            review.movieId = stoi(field.data);
-            field = parser.next_field();
-
-            review.rating = stof(field.data);
-            field = parser.next_field();
-
-            review.date = field.data;
-
-            response.push_back(review);
-            allRatingCounting++;
-          break;
-
-        case FieldType::CSV_END: 
-        isEnd = true;
-      }
-  }
-
-  cout << "Succeeded mapping all the " << allRatingCounting << " ratings from file!" << endl;
-
-  return response;
-}
-
-
-void printAllFileDataByName(char fileName[]){
-  ifstream f(fileName);
-  CsvParser parser(f);
-
-  while(true) {
-    auto field = parser.next_field();
-    switch (field.type) {
-      case FieldType::DATA:
-        cout << field.data << " | ";
-        break;
-      case FieldType::ROW_END:
-        cout <<endl;
-        break;
-      case FieldType::CSV_END:
-        cout << endl;
-        return;
+    // REMOVE FIRST LINE
+    int NUM_WORDS_TO_REMOVE = 4;
+    for(int i = 0; i < NUM_WORDS_TO_REMOVE; i++){
+        parser.next_field();
     }
-  }
-  
+
+    int lastUserId = -1;
+    User user;
+
+    while (true) {
+        auto field = parser.next_field();
+        if (field.type == FieldType::CSV_END) break;
+        if (field.type != FieldType::DATA) continue;
+
+        int userId = stoi(field.data);
+
+        // If new user, push previous and start new
+        if (userId != lastUserId && lastUserId != -1) {
+            response.push_back(user);
+            user = User();
+        }
+        user.userId = userId;
+        lastUserId = userId;
+
+        // MovieId
+        field = parser.next_field();
+        int movieId = stoi(field.data);
+
+        // Rating
+        field = parser.next_field();
+        float rating = stof(field.data);
+
+        // Date
+        field = parser.next_field();
+        string date = field.data;
+
+        // Add review
+        Review review;
+        review.movieId = movieId;
+        review.rating = rating;
+        review.date = date;
+        user.reviews.push_back(review);
+
+        allRatingCounting++;
+    }
+
+    // Push last user if any reviews were read
+    if (!user.reviews.empty()) {
+        response.push_back(user);
+    }
+
+    cout << "Succeeded mapping all the " << allRatingCounting << " ratings from file!" << endl;
+    return response;
 }
 
 vector<string> splitStringIntoNewVectorBySeparator(string s, string delimiter) {

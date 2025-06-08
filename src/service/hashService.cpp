@@ -8,7 +8,7 @@ void addToMoviesHashTable(vector<unique_ptr<MovieHash>>& hashTable, MovieHash mo
 
   movieHash->next = nullptr;
 
-  insertPlayerInHashTableById(hashTable, movieHash);
+  insertDataInHashTableById(hashTable, movieHash);
 
 }
 
@@ -26,7 +26,7 @@ vector<unique_ptr<MovieHash>> createMoviesHashTable(vector<Movie> movies)
     //Mapping Movie to MovieHash
     movieHash->movie = movies.at(i);
 
-    int tableSize = insertPlayerInHashTableById(response, movieHash);
+    int tableSize = insertDataInHashTableById(response, movieHash);
 
     if(tableSize > greatestTableSize){
       greatestTableSize = tableSize;
@@ -40,7 +40,7 @@ vector<unique_ptr<MovieHash>> createMoviesHashTable(vector<Movie> movies)
   return response;
 }
 
-int insertPlayerInHashTableById(vector<unique_ptr<MovieHash>>& hashTable, unique_ptr<MovieHash>& movieHash)
+int insertDataInHashTableById(vector<unique_ptr<MovieHash>>& hashTable, unique_ptr<MovieHash>& movieHash)
 {
   int module = (int) movieHash->movie.movieId % MAX_MOVIE_HASH;
   int tableSize = 1;

@@ -2,8 +2,11 @@
 #define CONSTANTS_HPP
 
 #include <vector>
+#include <iostream>
 #include <string> 
 #include <chrono> // Timer
+#include "../../parser-master/parser.hpp" // CSV Parser
+#include <memory> // For unique_ptr
 
 //FILES
 #define MOVIE_FILE_BIG_DATA "./datas/dados-completo/movies.csv"
@@ -16,8 +19,10 @@
 
 //HASH
 #define MAX_MOVIE_HASH 11131
+#define MAX_RATING_HASH 104723
 
 using namespace std;
+using namespace aria::csv;
 
 typedef struct typeMovie{
   int movieId;
@@ -26,14 +31,6 @@ typedef struct typeMovie{
   vector<string> formatGenres;
   int year;
 } Movie;
-
-typedef struct typeReview{
-  int userId;
-  int movieId;
-  float rating;
-  string date;
-
-} Review;
 
 typedef struct typeMovieHash{
   Movie movie;
@@ -45,5 +42,18 @@ typedef struct typeMovieHash{
   struct typeMovieHash *next;
 
 } MovieHash;
+
+typedef struct typeReview{
+  int movieId;
+  float rating;
+  string date;
+
+} Review;
+
+typedef struct typeUser{
+  int userId;
+  vector<Review> reviews;
+
+} User;
 
 #endif
