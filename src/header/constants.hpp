@@ -2,14 +2,10 @@
 #define CONSTANTS_HPP
 
 #include <vector>
-#include <string>
+#include <string> 
+#include <chrono> // Timer
 
 //FILES
-#define MOVIE_FILE_SMALL_DATA "./datas/dados-pequeno/movies.csv"
-#define MINIRATINGS_FILE_SMALL_DATA "./datas/dados-pequeno/miniratings.csv"
-#define RATINGS_FILE_SMALL_DATA "./datas/dados-pequeno/ratings.csv"
-#define TAGS_FILE_SMALL_DATA "./datas/dados-pequeno/tags.csv"
-
 #define MOVIE_FILE_BIG_DATA "./datas/dados-completo/movies.csv"
 #define MINIRATINGS_FILE_BIG_DATA "./datas/dados-completo/miniratings.csv"
 #define RATINGS_FILE_BIG_DATA "./datas/dados-completo/ratings.csv"
@@ -19,7 +15,7 @@
 #define GENRES_SEPARATION "|"
 
 //HASH
-#define MAX_MOVIE_HASH 503
+#define MAX_MOVIE_HASH 11131
 
 using namespace std;
 
@@ -40,10 +36,7 @@ typedef struct typeReview{
 } Review;
 
 typedef struct typeMovieHash{
-  int movieId;
-  string title;
-  vector<string> genres;
-  int year;
+  Movie movie;
 
   int rating;
   int ratingCounting;

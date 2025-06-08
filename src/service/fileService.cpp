@@ -1,8 +1,9 @@
 #include "../header/fileHeader.hpp"
+#include "../header/hashHeader.hpp"
 #include "../header/constants.hpp"
 
-vector<Movie> setAllMoviesFromFileToVector(){ 
-  ifstream f(MOVIE_FILE_SMALL_DATA);
+vector<Movie> setAllMoviesFromFileToVector(vector<unique_ptr<MovieHash>>& moviesHashTable){ 
+  ifstream f(MOVIE_FILE_BIG_DATA);
   CsvParser parser(f);
 
   vector<Movie> response;
@@ -18,24 +19,25 @@ vector<Movie> setAllMoviesFromFileToVector(){
   }
 
   while(!isEnd) {
-    Movie movie;
+    MovieHash movie;
     field = parser.next_field();
       switch (field.type) {
         case FieldType::DATA:
-            movie.movieId = stoi(field.data);
+            movie.movie.movieId = stoi(field.data);
             field = parser.next_field();
 
-            movie.title = field.data;
+            movie.movie.title = field.data;
             field = parser.next_field();
 
-            movie.genres = field.data;
-            movie.formatGenres = splitStringIntoNewVectorBySeparator(movie.genres, GENRES_SEPARATION);
+            movie.movie.genres = field.data;
+            movie.movie.formatGenres = splitStringIntoNewVectorBySeparator(movie.movie.genres, GENRES_SEPARATION);
             field = parser.next_field();
 
-            movie.year = stoi(field.data);
+            movie.movie.year = stoi(field.data);
 
-            response.push_back(movie);
+            response.push_back(movie.movie);
             movieCounting++;
+            addToMoviesHashTable(moviesHashTable, movie);
           break;
         case FieldType::CSV_END: 
         isEnd = true;
@@ -48,7 +50,7 @@ vector<Movie> setAllMoviesFromFileToVector(){
 }
 
 vector<Review> setAllReviewsFromFileToVector(){
-  ifstream f(MINIRATINGS_FILE_SMALL_DATA);
+  ifstream f(MINIRATINGS_FILE_BIG_DATA);
   CsvParser parser(f);
 
   vector<Review> response;
