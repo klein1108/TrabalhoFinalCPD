@@ -37,6 +37,8 @@
     "sstream": "cpp",
     "stdexcept": "cpp",
     "streambuf": "cpp",
-    "typeinfo": "cpp"
-  }
+    "typeinfo": "cpp",
+    "chrono": "cpp"
+  },
+  "C_Cpp.default.compilerPath": "C:/msys64/ucrt64/bin/g++.exe"
 }
