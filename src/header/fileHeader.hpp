@@ -5,7 +5,7 @@
 #include "constants.hpp"
 
 vector<Movie> setAllMoviesFromFileToVector(vector<unique_ptr<MovieHash>>& moviesHashTable);
-vector<User> setAllReviewsFromFileToVector();
+vector<User> setAllReviewsFromFileToVector(vector<unique_ptr<UserHash>>& usersHashTable);
 vector<string> splitStringIntoNewVectorBySeparator(string s, string delimiter);
 
 #endif

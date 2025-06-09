@@ -8,39 +8,23 @@ void addToMoviesHashTable(vector<unique_ptr<MovieHash>>& hashTable, MovieHash mo
 
   movieHash->next = nullptr;
 
-  insertDataInHashTableById(hashTable, movieHash);
+  insertMovieInHashTableById(hashTable, movieHash);
 
 }
 
-vector<unique_ptr<MovieHash>> createMoviesHashTable(vector<Movie> movies)
+void addToUsersHashTable(vector<unique_ptr<UserHash>>& hashTable, UserHash user)
 {
-  vector<unique_ptr<MovieHash>> response(MAX_MOVIE_HASH);
-  
-  int greatestTableSize = 0;
+  unique_ptr<UserHash> userHash = make_unique<UserHash>();
 
-  for(int i = 0; i < movies.size(); i++){
-    unique_ptr<MovieHash> movieHash = make_unique<MovieHash>();
+  userHash->user = user.user;
 
-    movieHash->next = nullptr;
+  userHash->next = nullptr;
 
-    //Mapping Movie to MovieHash
-    movieHash->movie = movies.at(i);
+  insertUserInHashTableById(hashTable, userHash);
 
-    int tableSize = insertDataInHashTableById(response, movieHash);
-
-    if(tableSize > greatestTableSize){
-      greatestTableSize = tableSize;
-    }
-
-  }
-
-  cout << "Hash table was created with success!" << endl;
-  cout << "The greatest table was " << greatestTableSize << " pointer long!" << endl;
-
-  return response;
 }
 
-int insertDataInHashTableById(vector<unique_ptr<MovieHash>>& hashTable, unique_ptr<MovieHash>& movieHash)
+int insertMovieInHashTableById(vector<unique_ptr<MovieHash>>& hashTable, unique_ptr<MovieHash>& movieHash)
 {
   int module = (int) movieHash->movie.movieId % MAX_MOVIE_HASH;
   int tableSize = 1;
@@ -57,6 +41,28 @@ int insertDataInHashTableById(vector<unique_ptr<MovieHash>>& hashTable, unique_p
       tableSize++;
     }
     current->next = movieHash.release();
+    
+  }
+  return tableSize;
+}
+
+int insertUserInHashTableById(vector<unique_ptr<UserHash>>& hashTable, unique_ptr<UserHash>& userHash)
+{
+  int module = (int) userHash->user.userId % MAX_USER_HASH;
+  int tableSize = 1;
+
+  if(!hashTable.at(module)){
+    hashTable[module] = move(userHash);
+
+  } else {
+    tableSize++;
+    UserHash* current = hashTable[module].get();
+
+    while (current->next != nullptr) {
+      current = current->next;
+      tableSize++;
+    }
+    current->next = userHash.release();
     
   }
   return tableSize;

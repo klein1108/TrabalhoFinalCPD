@@ -10,16 +10,17 @@ int main(){
   cout << "Welcome to the Movie Review System!" << endl;
 
   vector<unique_ptr<MovieHash>> moviesHashTable(MAX_MOVIE_HASH);
+  vector<unique_ptr<UserHash>> usersHashTable(MAX_USER_HASH);
   
   vector<Movie> allMoviesFromFile = setAllMoviesFromFileToVector(moviesHashTable);
   
-  vector<User> allUsersFromFile = setAllReviewsFromFileToVector();
+  vector<User> allUsersFromFile = setAllReviewsFromFileToVector(usersHashTable);
 
   auto end = chrono::high_resolution_clock::now(); // End timer
   chrono::duration<double> elapsed = end - start;
   cout << "Execution time: " << elapsed.count() << " seconds" << endl;
 
-  printUserById(allUsersFromFile, 1);
+  //printUserById(allUsersFromFile, 1);
 
   return 0;
 }

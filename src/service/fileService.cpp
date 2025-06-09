@@ -49,7 +49,7 @@ vector<Movie> setAllMoviesFromFileToVector(vector<unique_ptr<MovieHash>>& movies
   return response;
 }
 
-vector<User> setAllReviewsFromFileToVector() {
+vector<User> setAllReviewsFromFileToVector(vector<unique_ptr<UserHash>>& usersHashTable) {
     ifstream f(RATINGS_FILE_BIG_DATA);
     CsvParser parser(f);
 
@@ -63,7 +63,7 @@ vector<User> setAllReviewsFromFileToVector() {
     }
 
     int lastUserId = -1;
-    User user;
+    UserHash user;
 
     while (true) {
         auto field = parser.next_field();
@@ -74,10 +74,11 @@ vector<User> setAllReviewsFromFileToVector() {
 
         // If new user, push previous and start new
         if (userId != lastUserId && lastUserId != -1) {
-            response.push_back(user);
-            user = User();
+            addToUsersHashTable(usersHashTable, user);
+            response.push_back(user.user);
+            user = UserHash();
         }
-        user.userId = userId;
+        user.user.userId = userId;
         lastUserId = userId;
 
         // MovieId
@@ -97,14 +98,14 @@ vector<User> setAllReviewsFromFileToVector() {
         review.movieId = movieId;
         review.rating = rating;
         review.date = date;
-        user.reviews.push_back(review);
+        user.user.reviews.push_back(review);
 
         allRatingCounting++;
     }
 
     // Push last user if any reviews were read
-    if (!user.reviews.empty()) {
-        response.push_back(user);
+    if (!user.user.reviews.empty()) {
+        response.push_back(user.user);
     }
 
     cout << "Succeeded mapping all the " << allRatingCounting << " ratings from file!" << endl;

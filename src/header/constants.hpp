@@ -19,7 +19,7 @@
 
 //HASH
 #define MAX_MOVIE_HASH 11131
-#define MAX_RATING_HASH 104723
+#define MAX_USER_HASH 79999
 
 using namespace std;
 using namespace aria::csv;
@@ -55,5 +55,12 @@ typedef struct typeUser{
   vector<Review> reviews;
 
 } User;
+
+typedef struct typeUserHash{
+  
+  User user;
+  struct typeUserHash *next;
+
+} UserHash;
 
 #endif
