@@ -2,17 +2,14 @@
 #define CONSTANTS_HPP
 
 #include <vector>
-#include <string>
-#include <memory>
-#include <chrono>
-#include <unordered_map>
+#include <iostream>
+#include <string> 
+#include <chrono> // Timer
+#include "../../parser-master/parser.hpp" // CSV Parser
+#include <memory> // For unique_ptr
+
 
 //FILES
-#define MOVIE_FILE_SMALL_DATA "./datas/dados-pequeno/movies.csv"
-#define MINIRATINGS_FILE_SMALL_DATA "./datas/dados-pequeno/miniratings.csv"
-#define RATINGS_FILE_SMALL_DATA "./datas/dados-pequeno/ratings.csv"
-#define TAGS_FILE_SMALL_DATA "./datas/dados-pequeno/tags.csv"
-
 #define MOVIE_FILE_BIG_DATA "./datas/dados-completo/movies.csv"
 #define MINIRATINGS_FILE_BIG_DATA "./datas/dados-completo/miniratings.csv"
 #define RATINGS_FILE_BIG_DATA "./datas/dados-completo/ratings.csv"
@@ -22,9 +19,11 @@
 #define GENRES_SEPARATION "|"
 
 //HASH
-#define MAX_MOVIE_HASH 503
+#define MAX_MOVIE_HASH 11131
+#define MAX_USER_HASH 79999
 
 using namespace std;
+using namespace aria::csv;
 
 typedef struct typeMovie{
   int movieId;
@@ -34,37 +33,36 @@ typedef struct typeMovie{
   int year;
 } Movie;
 
+typedef struct typeMovieHash{
+  Movie movie;
+
+  float rating;
+  float ratingCounting;
+  float ratingSum = 0;
+
+  struct typeMovieHash *next;
+
+} MovieHash;
+
 typedef struct typeReview{
-  int userId;
   int movieId;
   float rating;
   string date;
 
 } Review;
 
+typedef struct typeUser{
+  int userId;
+  vector<Review> reviews;
 
-typedef struct typeMovieInfo{
-  int movieId;
-  string title;
-  vector<string> genres;
-  int year;
+} User;
 
-  float rating;
-  int count;
-  float globalRating;
-} MovieInfo;
+typedef struct typeUserHash{
+  
+  User user;
+  struct typeUserHash *next;
 
-typedef struct typeUserReviewHash{
-  struct typeReview review;
-  struct typeMovieInfo movieInfo;
-  struct typeUserReviewHash *next;
 
-} UserReviewHash;
-
-typedef struct typeMovieHash{
-  struct typeMovieInfo movieInfo;
-  struct typeMovieHash *next;
-
-} MovieHash;
+} UserHash;
 
 #endif

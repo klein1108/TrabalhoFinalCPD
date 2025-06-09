@@ -1,42 +1,27 @@
 #include "header/fileHeader.hpp"
 #include "header/hashHeader.hpp"
+#include "header/searchHeader.hpp"
 #include "header/constants.hpp"
 
 int main(){
-  auto start = chrono::high_resolution_clock::now();
+  
+  auto start = chrono::high_resolution_clock::now(); // Start timer
 
-  //Estrutura 1: Armazenando Dados Sobre filmes
-  vector<Movie> allMoviesFromFile = setAllMoviesFromFileToVector();
-  vector<unique_ptr<MovieHash>> moviesHashTable = createMoviesHashTable(allMoviesFromFile);  
+  cout << "Welcome to the Movie Review System!" << endl;
 
-  //Estrutura 2: Estrutura para buscas por strings de nomes
+  vector<unique_ptr<MovieHash>> moviesHashTable(MAX_MOVIE_HASH);
+  vector<unique_ptr<UserHash>> usersHashTable(MAX_USER_HASH);
+  
+  vector<Movie> allMoviesFromFile = setAllMoviesFromFileToVector(moviesHashTable);
+  
+  vector<User> allUsersFromFile = setAllReviewsFromFileToVector(usersHashTable, moviesHashTable);
 
-  //(...)
+  auto end = chrono::high_resolution_clock::now(); // End timer
+  chrono::duration<double> elapsed = end - start;
+  cout << "Execution time: " << elapsed.count() << " seconds" << endl;
 
-  //Estrutura 3: Estrutura para guardar revis˜ oes de usu´ arios
-  vector<Review> allReviews = setAllReviewsFromFileToVectorAndHandleRatings(moviesHashTable);  // 35 segundos
-  setMovieHashTableRatingsBySumPerCounting(moviesHashTable);
-
-  auto end0 = chrono::high_resolution_clock::now();
-  chrono::duration<double> duration0 = end0 - start;
-  cout << duration0.count() << " segundos" << endl <<endl;
-
-
-  //Estrutura 3: Estrutura para guardar revisões de usuários
-  unordered_map<int, unique_ptr<UserReviewHash>> userReviewHashTable = createUserReviewHashTable(allReviews, moviesHashTable); // 76 segundos
-
-
-  //Estrutura 4: Estrutura para guardar tags
-
-  //(...)
-
-  auto end1 = chrono::high_resolution_clock::now();
-  chrono::duration<double> duration1 = end1 - end0;
-  cout << duration1.count() << " segundos" << endl <<endl;
-
-  auto endFinal = chrono::high_resolution_clock::now();
-  chrono::duration<double> durationFinal = endFinal - start;
-  cout << "Tempo de execucao de tudo: " << durationFinal.count() << " segundos" << endl <<endl;
+  //printUserById(usersHashTable, 54766);
+  //printMovieById(moviesHashTable, 102107);
 
   return 0;
 }

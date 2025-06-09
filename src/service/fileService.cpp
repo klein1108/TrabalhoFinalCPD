@@ -1,8 +1,10 @@
 #include "../header/fileHeader.hpp"
+#include "../header/hashHeader.hpp"
+#include "../header/searchHeader.hpp"
 #include "../header/constants.hpp"
 
-vector<Movie> setAllMoviesFromFileToVector(){ 
-  ifstream f(MOVIE_FILE_SMALL_DATA);
+vector<Movie> setAllMoviesFromFileToVector(vector<unique_ptr<MovieHash>>& moviesHashTable){ 
+  ifstream f(MOVIE_FILE_BIG_DATA);
   CsvParser parser(f);
 
   vector<Movie> response;
@@ -18,24 +20,25 @@ vector<Movie> setAllMoviesFromFileToVector(){
   }
 
   while(!isEnd) {
-    Movie movie;
+    MovieHash movie;
     field = parser.next_field();
       switch (field.type) {
         case FieldType::DATA:
-            movie.movieId = stoi(field.data);
+            movie.movie.movieId = stoi(field.data);
             field = parser.next_field();
 
-            movie.title = field.data;
+            movie.movie.title = field.data;
             field = parser.next_field();
 
-            movie.genres = field.data;
-            movie.formatGenres = splitStringIntoNewVectorBySeparator(movie.genres, GENRES_SEPARATION);
+            movie.movie.genres = field.data;
+            movie.movie.formatGenres = splitStringIntoNewVectorBySeparator(movie.movie.genres, GENRES_SEPARATION);
             field = parser.next_field();
 
-            movie.year = stoi(field.data);
+            movie.movie.year = stoi(field.data);
 
-            response.push_back(movie);
+            response.push_back(movie.movie);
             movieCounting++;
+            addToMoviesHashTable(moviesHashTable, movie);
           break;
         case FieldType::CSV_END: 
         isEnd = true;
@@ -43,107 +46,72 @@ vector<Movie> setAllMoviesFromFileToVector(){
   }
 
   cout << "Succeeded mapping all the " << movieCounting << " movies from file!" << endl;
-  
-  return response;
-}
-
-vector<Review> setAllReviewsFromFileToVectorAndHandleRatings(vector<unique_ptr<MovieHash>>& hashTable){
-  // ifstream f(MINIRATINGS_FILE_SMALL_DATA);
-  ifstream f(RATINGS_FILE_BIG_DATA);
-  CsvParser parser(f);
-
-  vector<Review> response;
-
-  int allRatingCounting = 0;
-
-  //REMOVE FIRST LINE
-  int NUM_WORDS_TO_REMOVE = 4;
-
-  int isEnd = false;
-
-  auto field = parser.next_field();
-  for(int i = 0; i < NUM_WORDS_TO_REMOVE; i++){
-    field = parser.next_field();
-  }
-
-  while(!isEnd) {
-    Review review;
-    field = parser.next_field();
-      switch (field.type) {
-        case FieldType::DATA:
-            review.userId = stoi(field.data);
-            field = parser.next_field();
-
-            review.movieId = stoi(field.data);
-            field = parser.next_field();
-
-            review.rating = stof(field.data);
-            field = parser.next_field();
-
-            review.date = field.data;
-
-            response.push_back(review);
-
-            increaseHashMovieRatingValues(review, hashTable);
-
-            allRatingCounting++;
-          break;
-
-        case FieldType::CSV_END: 
-        isEnd = true;
-      }
-  }
-
-  cout << "Succeeded mapping all the " << allRatingCounting << " ratings from file!" << endl;
 
   return response;
 }
 
-void setMovieHashTableRatingsBySumPerCounting(vector<unique_ptr<MovieHash>>& hashTable){
-  for(int i = 0; i < hashTable.size(); i++){
-    if(hashTable.at(i) && hashTable.at(i)->movieInfo.count > 0){
-      hashTable.at(i)->movieInfo.rating = (float) hashTable.at(i)->movieInfo.globalRating / hashTable.at(i)->movieInfo.count;
+vector<User> setAllReviewsFromFileToVector(vector<unique_ptr<UserHash>>& usersHashTable, vector<unique_ptr<MovieHash>>& moviesHashTable) {
+    ifstream f(RATINGS_FILE_BIG_DATA);
+    CsvParser parser(f);
+
+    vector<User> response;
+    int allRatingCounting = 0;
+
+    // REMOVE FIRST LINE
+    int NUM_WORDS_TO_REMOVE = 4;
+    for(int i = 0; i < NUM_WORDS_TO_REMOVE; i++){
+        parser.next_field();
     }
-  }
-}
 
-void increaseHashMovieRatingValues(Review review, vector<unique_ptr<MovieHash>>& hashTable){
-  int module = (int)review.movieId % MAX_MOVIE_HASH;
-  
-  MovieHash* current = hashTable[module].get();
+    int lastUserId = -1;
+    UserHash user;
 
+    while (true) {
+        auto field = parser.next_field();
+        if (field.type == FieldType::CSV_END) break;
+        if (field.type != FieldType::DATA) continue;
 
-  while (current != nullptr && current->movieInfo.movieId != review.movieId) {
-    current = current->next;
-  }
-  
-  if (current != nullptr) {
-    current->movieInfo.globalRating += review.rating;
-    current->movieInfo.count++;
-  }
+        int userId = stoi(field.data);
 
-}
+        // If new user, push previous and start new
+        if (userId != lastUserId && lastUserId != -1) {
+            addToUsersHashTable(usersHashTable, user);
+            response.push_back(user.user);
+            user = UserHash();
+        }
+        user.user.userId = userId;
+        lastUserId = userId;
 
+        // MovieId
+        field = parser.next_field();
+        int movieId = stoi(field.data);
 
-void printAllFileDataByName(char fileName[]){
-  ifstream f(fileName);
-  CsvParser parser(f);
+        // Rating
+        field = parser.next_field();
+        float rating = stof(field.data);
 
-  while(true) {
-    auto field = parser.next_field();
-    switch (field.type) {
-      case FieldType::DATA:
-        cout << field.data << " | ";
-        break;
-      case FieldType::ROW_END:
-        cout <<endl;
-        break;
-      case FieldType::CSV_END:
-        cout << endl;
-        return;
+        // Date
+        field = parser.next_field();
+        string date = field.data;
+
+        // Add review
+        Review review;
+        review.movieId = movieId;
+        review.rating = rating;
+        review.date = date;
+        addRatintToRatingSum(moviesHashTable, review);
+        user.user.reviews.push_back(review);
+
+        allRatingCounting++;
     }
-  }
-  
+
+    // Push last user if any reviews were read
+    if (!user.user.reviews.empty()) {
+        response.push_back(user.user);
+    }
+
+    cout << "Succeeded mapping all the " << allRatingCounting << " ratings from file!" << endl;
+    return response;
 }
 
 vector<string> splitStringIntoNewVectorBySeparator(string s, string delimiter) {
