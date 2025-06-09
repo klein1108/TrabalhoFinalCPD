@@ -46,7 +46,7 @@ vector<Movie> setAllMoviesFromFileToVector(vector<unique_ptr<MovieHash>>& movies
   }
 
   cout << "Succeeded mapping all the " << movieCounting << " movies from file!" << endl;
-  
+
   return response;
 }
 

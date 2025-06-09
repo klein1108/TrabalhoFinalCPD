@@ -8,6 +8,7 @@
 #include "../../parser-master/parser.hpp" // CSV Parser
 #include <memory> // For unique_ptr
 
+
 //FILES
 #define MOVIE_FILE_BIG_DATA "./datas/dados-completo/movies.csv"
 #define MINIRATINGS_FILE_BIG_DATA "./datas/dados-completo/miniratings.csv"
@@ -60,6 +61,7 @@ typedef struct typeUserHash{
   
   User user;
   struct typeUserHash *next;
+
 
 } UserHash;
 

@@ -4,7 +4,7 @@
 #include "header/constants.hpp"
 
 int main(){
-
+  
   auto start = chrono::high_resolution_clock::now(); // Start timer
 
   cout << "Welcome to the Movie Review System!" << endl;

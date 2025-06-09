@@ -41,7 +41,7 @@ int insertMovieInHashTableById(vector<unique_ptr<MovieHash>>& hashTable, unique_
       tableSize++;
     }
     current->next = movieHash.release();
-    
+
   }
   return tableSize;
 }
@@ -63,7 +63,7 @@ int insertUserInHashTableById(vector<unique_ptr<UserHash>>& hashTable, unique_pt
       tableSize++;
     }
     current->next = userHash.release();
-    
+
   }
   return tableSize;
 }
