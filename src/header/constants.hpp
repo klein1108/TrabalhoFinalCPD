@@ -35,9 +35,9 @@ typedef struct typeMovie{
 typedef struct typeMovieHash{
   Movie movie;
 
-  int rating;
-  int ratingCounting;
-  int ratingSum;
+  float rating;
+  float ratingCounting;
+  float ratingSum = 0;
 
   struct typeMovieHash *next;
 

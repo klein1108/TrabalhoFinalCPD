@@ -1,5 +1,6 @@
 #include "../header/fileHeader.hpp"
 #include "../header/hashHeader.hpp"
+#include "../header/searchHeader.hpp"
 #include "../header/constants.hpp"
 
 vector<Movie> setAllMoviesFromFileToVector(vector<unique_ptr<MovieHash>>& moviesHashTable){ 
@@ -49,7 +50,7 @@ vector<Movie> setAllMoviesFromFileToVector(vector<unique_ptr<MovieHash>>& movies
   return response;
 }
 
-vector<User> setAllReviewsFromFileToVector(vector<unique_ptr<UserHash>>& usersHashTable) {
+vector<User> setAllReviewsFromFileToVector(vector<unique_ptr<UserHash>>& usersHashTable, vector<unique_ptr<MovieHash>>& moviesHashTable) {
     ifstream f(RATINGS_FILE_BIG_DATA);
     CsvParser parser(f);
 
@@ -98,6 +99,7 @@ vector<User> setAllReviewsFromFileToVector(vector<unique_ptr<UserHash>>& usersHa
         review.movieId = movieId;
         review.rating = rating;
         review.date = date;
+        addRatintToRatingSum(moviesHashTable, review);
         user.user.reviews.push_back(review);
 
         allRatingCounting++;

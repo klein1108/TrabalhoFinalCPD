@@ -14,13 +14,14 @@ int main(){
   
   vector<Movie> allMoviesFromFile = setAllMoviesFromFileToVector(moviesHashTable);
   
-  vector<User> allUsersFromFile = setAllReviewsFromFileToVector(usersHashTable);
+  vector<User> allUsersFromFile = setAllReviewsFromFileToVector(usersHashTable, moviesHashTable);
 
   auto end = chrono::high_resolution_clock::now(); // End timer
   chrono::duration<double> elapsed = end - start;
   cout << "Execution time: " << elapsed.count() << " seconds" << endl;
 
-  //printUserById(allUsersFromFile, 1);
+  //printUserById(usersHashTable, 54766);
+  //printMovieById(moviesHashTable, 102107);
 
   return 0;
 }

@@ -5,6 +5,8 @@
 #include "constants.hpp"
 
 void printAllFileDataByName(char fileName[]);
-void printUserById(const vector<User>& users, int searchId);
+void printUserById(const vector<unique_ptr<UserHash>>& usersHashTable, int searchId);
+void printMovieById(const vector<unique_ptr<MovieHash>>& moviesHashTable, int movieId);
+void addRatintToRatingSum(const vector<unique_ptr<MovieHash>>& moviesHashTable, Review review);
 
 #endif
