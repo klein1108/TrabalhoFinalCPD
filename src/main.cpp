@@ -20,8 +20,7 @@ int main(){
   chrono::duration<double> elapsed = end - start;
   cout << "Execution time: " << elapsed.count() << " seconds" << endl;
 
-  //printUserById(usersHashTable, 54766);
-  //printMovieById(moviesHashTable, 102107);
+  //printTop20RatingsByUserID(usersHashTable, moviesHashTable, 54766);
 
   return 0;
 }

@@ -31,15 +31,14 @@ typedef struct typeMovie{
   string genres;
   vector<string> formatGenres;
   int year;
-} Movie;
-
-typedef struct typeMovieHash{
-  Movie movie;
-
   float rating;
   float ratingCounting;
   float ratingSum = 0;
 
+} Movie;
+
+typedef struct typeMovieHash{
+  Movie movie;
   struct typeMovieHash *next;
 
 } MovieHash;
@@ -58,11 +57,14 @@ typedef struct typeUser{
 } User;
 
 typedef struct typeUserHash{
-  
   User user;
   struct typeUserHash *next;
 
-
 } UserHash;
+
+typedef struct typeMovieReviewed{
+  Movie movie;
+  float userRating;
+} MovieReviewed;
 
 #endif

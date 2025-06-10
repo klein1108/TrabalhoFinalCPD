@@ -1,6 +1,4 @@
 #include "../header/searchHeader.hpp"
-#include "../header/fileHeader.hpp"
-#include "../header/hashHeader.hpp"
 
 void printAllFileDataByName(char fileName[]){
   ifstream f(fileName);
@@ -29,9 +27,9 @@ void addRatintToRatingSum(const vector<unique_ptr<MovieHash>>& moviesHashTable, 
     MovieHash* current = moviesHashTable[index].get();
     while (current != nullptr) {
         if (current->movie.movieId == movieId) {
-            current->ratingSum += review.rating;
-            current->ratingCounting++;
-            current->rating = current->ratingSum / current->ratingCounting;
+            current->movie.ratingSum += review.rating;
+            current->movie.ratingCounting++;
+            current->movie.rating = current->movie.ratingSum / current->movie.ratingCounting;
             return; // Rating added successfully
         }
         current = current->next;
@@ -39,6 +37,33 @@ void addRatintToRatingSum(const vector<unique_ptr<MovieHash>>& moviesHashTable, 
 }
 
 //PRINT FUNCTIONS
+
+void printTop20RatingsByUserID(const vector<unique_ptr<UserHash>>& usersHashTable, const vector<unique_ptr<MovieHash>>& moviesHashTable, int userId) {
+    int index = userId % MAX_USER_HASH; 
+    UserHash* current = usersHashTable[index].get();
+
+    vector<MovieReviewed> ordenedMovies;
+
+    while (current != nullptr) {
+        if (current->user.userId == userId) {
+            cout << "User ID: " << current->user.userId << endl;
+            cout << "Top 20 Ratings: " << endl;
+              vector<Review> ordenedReviews = current->user.reviews;
+
+              firstSort(ordenedReviews, 0, ordenedReviews.size() - 1);
+              
+              for (const auto& review : ordenedReviews) {
+                  ordenedMovies.push_back({moviesHashTable[review.movieId % MAX_MOVIE_HASH]->movie, review.rating});
+              }
+
+              secondSort(ordenedMovies);
+              print20Movies(ordenedMovies);
+            
+            return;
+        }
+        current = current->next;
+    }
+}
 
 void printUserById(const vector<unique_ptr<UserHash>>& usersHashTable, int searchId) {
     int index = searchId % MAX_USER_HASH;
@@ -57,6 +82,26 @@ void printUserById(const vector<unique_ptr<UserHash>>& usersHashTable, int searc
     }
 }
 
+void print20Movies(vector<MovieReviewed> ordenedMovies) {
+    int count = 0;
+    for (const auto& movieReviewed : ordenedMovies) {
+        if (count < 20) {
+            cout << "Movie ID: " << movieReviewed.movie.movieId 
+                 << ", Title: " << movieReviewed.movie.title 
+                 << ", Genres: " << movieReviewed.movie.genres
+                 << ", Year: " << movieReviewed.movie.year
+                 << ", Global Rating: " << movieReviewed.movie.rating
+                 << ", Count: " << movieReviewed.movie.ratingCounting
+                 << ", Rating: " << movieReviewed.userRating  
+                 << endl;
+            count++;
+        } else {
+            break; // Stop after printing 20 movies
+        }
+    }
+    cout << "------------------------" << endl;
+}
+
 void printMovieById(const vector<unique_ptr<MovieHash>>& moviesHashTable, int movieId) {
     int index = movieId % MAX_MOVIE_HASH;
     MovieHash* current = moviesHashTable[index].get();
@@ -66,8 +111,8 @@ void printMovieById(const vector<unique_ptr<MovieHash>>& moviesHashTable, int mo
             cout << "Title: " << current->movie.title << endl;
             cout << "Genres: " << current->movie.genres << endl;
             cout << "Year: " << current->movie.year << endl;
-            cout << "Average Rating: " << current->rating << endl;
-            cout << "Number of Ratings: " << current->ratingCounting << endl;
+            cout << "Average Rating: " << current->movie.rating << endl;
+            cout << "Number of Ratings: " << current->movie.ratingCounting << endl;
             cout << "------------------------" << endl;
             return;
         }
