@@ -45,6 +45,10 @@ typedef struct typeMovieHash{
   float ratingCounting;
   float ratingSum = 0;
 
+} Movie;
+
+typedef struct typeMovieHash{
+  Movie movie;
   struct typeMovieHash *next;
 
 } MovieHash;
