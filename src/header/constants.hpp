@@ -17,6 +17,10 @@
 
 //UTILS
 #define GENRES_SEPARATION "|"
+#define UPPERCASE_ASCII_START 65
+#define UPPERCASE_ASCII_END 90
+#define UPPERCASE_SUM_TO_LOWERCASE 32
+#define NO_WORD_RELATED 0
 
 //HASH
 #define MAX_MOVIE_HASH 11131
@@ -61,6 +65,17 @@ typedef struct typeUserHash{
   struct typeUserHash *next;
 
 } UserHash;
+
+typedef struct typeTernarySearchTree{
+  char letter;
+  int movieId = NO_WORD_RELATED;
+  struct typeTernarySearchTree *next;
+  struct typeTernarySearchTree *left;
+  struct typeTernarySearchTree *right;
+
+  // teste para ver se da pra alocar o filme aqui e pegar as infos dele direto
+  const Movie* movie;
+} TernarySearchTree;
 
 typedef struct typeMovieReviewed{
   Movie movie;
