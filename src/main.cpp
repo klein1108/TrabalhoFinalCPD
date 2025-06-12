@@ -22,14 +22,14 @@ int main(){
   //TERNARY SEARCH TREE
   unique_ptr<TernarySearchTree> movieTree = setTernarySearchTreeByMovieNames(allMoviesFromFile);
 
+  auto end = chrono::high_resolution_clock::now(); // End timer
+  chrono::duration<double> elapsed = end - start;
+  cout << "Execution time: " << elapsed.count() << " seconds" << endl;
+
   //FILTER TREE BY SUFIX
   const string prefix = "toy"; 
   vector<Movie> movies = searchMoviesByPrefix(movieTree.get(), prefix);
   printAllMovieNamesFilteredByPrefix(movies);
-
-  auto end = chrono::high_resolution_clock::now(); // End timer
-  chrono::duration<double> elapsed = end - start;
-  cout << "Execution time: " << elapsed.count() << " seconds" << endl;
 
   //printTop20RatingsByUserID(usersHashTable, moviesHashTable, 54766);
 

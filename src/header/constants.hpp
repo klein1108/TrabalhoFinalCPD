@@ -35,12 +35,6 @@ typedef struct typeMovie{
   string genres;
   vector<string> formatGenres;
   int year;
-
-} Movie;
-
-typedef struct typeMovieHash{
-  Movie movie;
-
   float rating;
   float ratingCounting;
   float ratingSum = 0;
@@ -82,5 +76,10 @@ typedef struct typeTernarySearchTree{
   // teste para ver se da pra alocar o filme aqui e pegar as infos dele direto
   const Movie* movie;
 } TernarySearchTree;
+
+typedef struct typeMovieReviewed{
+  Movie movie;
+  float userRating;
+} MovieReviewed;
 
 #endif
