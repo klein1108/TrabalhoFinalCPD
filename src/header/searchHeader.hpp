@@ -21,5 +21,5 @@ void printUserById(const vector<unique_ptr<UserHash>>& usersHashTable, int searc
 void printMovieById(const vector<unique_ptr<MovieHash>>& moviesHashTable, int movieId);
 void printTop20RatingsByUserID(const vector<unique_ptr<UserHash>>& usersHashTable, const vector<unique_ptr<MovieHash>>& moviesHashTable, int userId);
 void printAllTagsFiltered(const vector<int>& moviesWithTag, const vector<unique_ptr<MovieHash>>& moviesHashTable);
-
+vector<MovieReviewed> filterMoviesByGenre(vector<Movie>& allMovies, vector<unique_ptr<MovieHash>>& hashTable, const string genre, int topX);
 #endif

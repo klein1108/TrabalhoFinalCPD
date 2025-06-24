@@ -40,8 +40,11 @@ int main(){
   //FILTER TAGS TREE 
   const string tagName = "'feel-good' 'predictable'";
   searchByTags(tagTree, tagName, moviesHashTable);
-
   printTop20RatingsByUserID(usersHashTable, moviesHashTable, 54766);
+
+  //FILTER MOVIES BY GENRE
+  const string genre = "Animation";
+  vector<MovieReviewed> topXmoviesFilteredByGenre = filterMoviesByGenre(allMoviesFromFile, moviesHashTable, genre, 20);
 
   return 0;
 }
