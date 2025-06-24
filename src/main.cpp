@@ -79,7 +79,7 @@ int main(){
     }
   } while (programStage != EXIT_COMMAND);
 
-  cout << "Fim do programa!" << endl;
+  cout << "End of the Movie Review System!" << endl;
  
   return 0;
 }
