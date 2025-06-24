@@ -31,6 +31,10 @@ int main(){
   vector<Movie> movies = searchMoviesByPrefix(movieTree.get(), prefix);
   printAllMovieNamesFilteredByPrefix(movies);
 
+  //FILTER MOVIES BY GENRE
+  const string genre = "Animation";
+  vector<MovieReviewed> topXmoviesFilteredByGenre = filterMoviesByGenre(allMoviesFromFile, moviesHashTable, genre, 20);
+
   //printTop20RatingsByUserID(usersHashTable, moviesHashTable, 54766);
 
   return 0;

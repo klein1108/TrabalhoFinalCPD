@@ -120,3 +120,38 @@ void printMovieById(const vector<unique_ptr<MovieHash>>& moviesHashTable, int mo
     }
     cout << "Movie with ID " << movieId << " not found." << endl;
 }
+
+vector<MovieReviewed> filterMoviesByGenre(vector<Movie>& allMovies, vector<unique_ptr<MovieHash>>& movieHash, const string genre, int topX){
+    vector<MovieReviewed> allMoviesReviewed;
+    vector<MovieReviewed> response;
+    int index = 0;
+    static const size_t npos = -1;
+    for(int i = 0; i < allMovies.size(); i++){
+        MovieReviewed teste;
+        int genrePos = allMovies.at(i).genres.find(genre);
+        if(genrePos != npos){
+            teste.movie = allMovies.at(i);
+            index = teste.movie.movieId % MAX_MOVIE_HASH; 
+            
+            MovieHash* current = movieHash[index].get();
+            while(current->movie.movieId != teste.movie.movieId && current->next != nullptr){
+                current = current->next;
+            }
+            teste.movie.rating = current->movie.rating;
+            teste.userRating = teste.movie.rating;
+
+            allMoviesReviewed.push_back(teste);
+        }
+
+    }
+
+    quickSortMovies(allMoviesReviewed, 0, allMoviesReviewed.size()-1);
+
+    for(int i = 0; i < topX && i <= response.size(); i++){
+        response.push_back(allMoviesReviewed.at(i));
+        cout << i+1 << " - FILME: " << response.at(i).movie.movieId << " -> RATING: " << response.at(i).movie.rating << endl;
+    }
+    
+
+    return response;
+}
