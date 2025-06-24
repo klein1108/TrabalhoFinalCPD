@@ -6,13 +6,13 @@ int partitionReviews(vector<Review>& arr, int low, int high) {
 
     for (int j = low; j < high; j++) {
         
-        if (arr[j].rating > pivot) {
+        if (arr[j].rating > pivot) { //Decrescente order
             i++;
-            std::swap(arr[i], arr[j]);
+            swap(arr[i], arr[j]);
         }
     }
 
-    std::swap(arr[i + 1], arr[high]);
+    swap(arr[i + 1], arr[high]);
     return i + 1;
 }
 
@@ -21,14 +21,30 @@ int partitionMovies(vector<MovieReviewed>& arr, int low, int high) {
     int i = low - 1; 
 
     for (int j = low; j < high; j++) {
-        
-        if (arr[j].movie.rating > pivot) {
+
+        if (arr[j].movie.rating > pivot) { //Decrescente order
             i++;
-            std::swap(arr[i], arr[j]);
+            swap(arr[i], arr[j]);
         }
     }
 
-    std::swap(arr[i + 1], arr[high]);
+    swap(arr[i + 1], arr[high]);
+    return i + 1;
+}
+
+int partition(vector<int>& arr, int low, int high) {
+    auto pivot = arr[high]; 
+    int i = low - 1; 
+
+    for (int j = low; j < high; j++) 
+    {
+        if (arr[j] < pivot) {  //Crescente order
+            i++;
+            swap(arr[i], arr[j]);
+        }
+    }
+
+    swap(arr[i + 1], arr[high]);
     return i + 1;
 }
 
@@ -62,5 +78,15 @@ void quickSortMovies(vector<MovieReviewed>& movieR, int low, int high) {
         // Recursivamente ordena os subvetores
         quickSortMovies(movieR, low, pi - 1);
         quickSortMovies(movieR, pi + 1, high);
+    }
+}
+
+void quickSort(vector<int>& vec, int low, int high) {
+    if (low < high) {
+        int pi = partition(vec, low, high);
+
+        // Recursivamente ordena os subvetores
+        quickSort(vec, low, pi - 1);
+        quickSort(vec, pi + 1, high);
     }
 }

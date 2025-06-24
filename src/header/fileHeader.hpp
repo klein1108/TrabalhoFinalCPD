@@ -9,6 +9,7 @@
 
 vector<Movie> setAllMoviesFromFileToVector(vector<unique_ptr<MovieHash>>& moviesHashTable);
 vector<User> setAllReviewsFromFileToVector(vector<unique_ptr<UserHash>>& usersHashTable, vector<unique_ptr<MovieHash>>& moviesHashTable);
+vector<Tag> setAllTagsFromFileToVector();
 vector<string> splitStringIntoNewVectorBySeparator(string s, string delimiter);
 
 #endif

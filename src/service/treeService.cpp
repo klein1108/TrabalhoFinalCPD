@@ -1,5 +1,6 @@
 #include "../header/treeHeader.hpp"
 
+//MOVIE TERNARY SEARCH TREE
 
 void insertTST(TernarySearchTree*& node, const Movie& movie, int pos) {
   if (!node) {
@@ -87,6 +88,7 @@ vector<Movie> searchMoviesByPrefix(TernarySearchTree* root, const string& prefix
 }
 
 void printAllMovieNamesFilteredByPrefix(vector<Movie> moviesFilteredByPrefix){
+
   for (const auto& movie : moviesFilteredByPrefix) {
     cout << movie.movieId << " | " 
     << movie.title << " | " 
@@ -94,4 +96,44 @@ void printAllMovieNamesFilteredByPrefix(vector<Movie> moviesFilteredByPrefix){
     << movie.year << " | " 
     << endl;
   }
+}
+
+//TAGS TERNARY SEARCH TREE
+//=======================================================================================================================
+
+// Função para criar a TST de tags
+unique_ptr<TagsTST> setTernarySearchTreeByTags(const vector<Tag>& tags) {
+  unique_ptr<TagsTST> root = nullptr;
+
+  for (const Tag& tag : tags) {
+      if (!tag.tag.empty()) {
+        insertTagsTst(root, tag, 0);
+      }
+  }
+
+  cout << "All the tags were successfuly allocated" << endl;
+  return root;
+}
+
+// Função auxiliar para inserir tags na TST
+void insertTagsTst(unique_ptr<TagsTST>& node, const Tag& tag, int pos) {
+  char c = tolower(tag.tag[pos]);
+  
+  if (!node) {
+    node = make_unique<TagsTST>();
+    node->letter = c;
+    node->leafFlag = false;
+  }
+  if (c < node->letter) {
+    insertTagsTst(node->left, tag, pos);
+} else if (c > node->letter) {
+    insertTagsTst(node->right, tag, pos);
+} else {
+    if (pos + 1 == tag.tag.size()) {
+        node->leafFlag = true;
+        node->movieIds.push_back(tag.movieId);
+    } else {
+        insertTagsTst(node->next, tag, pos + 1);
+    }
+}
 }

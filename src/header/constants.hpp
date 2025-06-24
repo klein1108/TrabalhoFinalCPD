@@ -4,6 +4,8 @@
 #include <vector>
 #include <iostream>
 #include <string> 
+#include <algorithm>
+#include <iomanip>
 #include <chrono> // Timer
 #include "../../parser-master/parser.hpp" // CSV Parser
 #include <memory> // For unique_ptr
@@ -29,6 +31,8 @@
 using namespace std;
 using namespace aria::csv;
 
+// Data Structures
+// Movie, Review, User, Tag
 typedef struct typeMovie{
   int movieId;
   string title;
@@ -40,12 +44,6 @@ typedef struct typeMovie{
   float ratingSum = 0;
 
 } Movie;
-
-typedef struct typeMovieHash{
-  Movie movie;
-  struct typeMovieHash *next;
-
-} MovieHash;
 
 typedef struct typeReview{
   int movieId;
@@ -60,26 +58,57 @@ typedef struct typeUser{
 
 } User;
 
+typedef struct typeTags{
+  int userId;
+  int movieId;
+  string tag;
+  string timestamp;
+
+} Tag;
+
+// Hash Structures
+
+typedef struct typeMovieHash{
+  Movie movie;
+  struct typeMovieHash *next;
+
+} MovieHash;
+
 typedef struct typeUserHash{
   User user;
   struct typeUserHash *next;
 
 } UserHash;
 
-typedef struct typeTernarySearchTree{
+// MovieReviewed for sorting
+typedef struct typeMovieReviewed{
+  Movie movie;
+  float userRating;
+
+} MovieReviewed;
+
+// Ternary Search Tree 
+
+typedef struct typeTSTMovie{
   char letter;
   int movieId = NO_WORD_RELATED;
-  struct typeTernarySearchTree *next;
-  struct typeTernarySearchTree *left;
-  struct typeTernarySearchTree *right;
+  struct typeTSTMovie *next;
+  struct typeTSTMovie *left;
+  struct typeTSTMovie *right;
 
   // teste para ver se da pra alocar o filme aqui e pegar as infos dele direto
   const Movie* movie;
 } TernarySearchTree;
 
-typedef struct typeMovieReviewed{
-  Movie movie;
-  float userRating;
-} MovieReviewed;
+typedef struct typeTagsTST{
+  char letter;
+  bool leafFlag = false;
+  unique_ptr<typeTagsTST> next;
+  unique_ptr<typeTagsTST> left;
+  unique_ptr<typeTagsTST> right;
+
+  // teste para ver se da pra alocar o filme aqui e pegar as infos dele direto
+  vector<int> movieIds;
+} TagsTST;
 
 #endif
