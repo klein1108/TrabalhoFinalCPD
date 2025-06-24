@@ -38,6 +38,19 @@ void addRatingToRatingSum(const vector<unique_ptr<MovieHash>>& moviesHashTable, 
 
 //PRINT FUNCTIONS
 
+void printTopXMoviesByGenre(vector<MovieReviewed>& movieReviewed, int& topX){
+    for(int i = 0; i < topX && i < movieReviewed.size(); i++){
+        cout << "Movie ID: " << movieReviewed.at(i).movie.movieId 
+                 << ", Title: " << movieReviewed.at(i).movie.title 
+                 << ", Genres: " << movieReviewed.at(i).movie.genres
+                 << ", Year: " << movieReviewed.at(i).movie.year
+                 << ", Global Rating: " << fixed << setprecision(6) << movieReviewed.at(i).movie.rating
+                 << ", Count: " << movieReviewed.at(i).movie.ratingCounting
+                 << ", Rating: " << movieReviewed.at(i).userRating  
+                 << endl;
+    }
+}
+
 void printTop20RatingsByUserID(const vector<unique_ptr<UserHash>>& usersHashTable, const vector<unique_ptr<MovieHash>>& moviesHashTable, int userId) {
     int index = userId % MAX_USER_HASH; 
     UserHash* current = usersHashTable[index].get();
@@ -142,7 +155,7 @@ void searchByTags(unique_ptr<TagsTST>& root, const string& tagsString, const vec
       }
       return;
     } else {
-        vector<string> tags = separarPorAspasSimples(tagsString);
+        vector<string> tags = separateBySingleQuotes(tagsString);
         vector<vector<int>> moviesWithTags;
         for (const string& tag : tags) {
             moviesWithTags.push_back(searchTags(root, tag));
@@ -211,26 +224,26 @@ vector<int> tagsInCommon(vector<vector<int>> moviesWithTags) {
     return commonMovies;
 }
 
-vector<string> separarPorAspasSimples(const string& input) {
-    vector<string> resultado;
-    bool dentroDeAspas = false;
-    string palavraAtual;
+vector<string> separateBySingleQuotes(const string& input) {
+    vector<string> result;
+    bool insideSingleQuotes = false;
+    string currentWord;
 
     for (char c : input) {
         if (c == '\'') {
-            if (dentroDeAspas) {
+            if (insideSingleQuotes) {
                 // Fecha uma palavra
-                resultado.push_back(palavraAtual);
-                palavraAtual.clear();
+                result.push_back(currentWord);
+                currentWord.clear();
             }
             // Alterna o estado
-            dentroDeAspas = !dentroDeAspas;
-        } else if (dentroDeAspas) {
-            palavraAtual += c;
+            insideSingleQuotes = !insideSingleQuotes;
+        } else if (insideSingleQuotes) {
+            currentWord += c;
         }
     }
 
-    return resultado;
+    return result;
 }
 
 // Função de busca por prefixo na TST de tags
@@ -275,6 +288,19 @@ void printAllTagsFiltered(const vector<int>& moviesWithTag, const vector<unique_
   }
 }
 
+void getAllRatings(vector<Movie>& allMovies, vector<unique_ptr<MovieHash>>& movieHash){
+    for(int i = 0; i < allMovies.size(); i++){
+        int index = allMovies.at(i).movieId % MAX_MOVIE_HASH; 
+        MovieHash* current = movieHash[index].get();
+        while(current->movie.movieId != allMovies.at(i).movieId && current->next != nullptr){
+            current = current->next;
+        }
+        allMovies.at(i).rating = current->movie.rating;
+        allMovies.at(i).ratingCounting = current->movie.ratingCounting;
+    }
+
+}
+
 vector<MovieReviewed> filterMoviesByGenre(vector<Movie>& allMovies, vector<unique_ptr<MovieHash>>& movieHash, const string genre, int topX){
     vector<MovieReviewed> allMoviesReviewed;
     vector<MovieReviewed> response;
@@ -285,27 +311,70 @@ vector<MovieReviewed> filterMoviesByGenre(vector<Movie>& allMovies, vector<uniqu
         int genrePos = allMovies.at(i).genres.find(genre);
         if(genrePos != npos){
             teste.movie = allMovies.at(i);
-            index = teste.movie.movieId % MAX_MOVIE_HASH; 
-            
-            MovieHash* current = movieHash[index].get();
-            while(current->movie.movieId != teste.movie.movieId && current->next != nullptr){
-                current = current->next;
+            if(teste.movie.ratingCounting >= 1000){
+                allMoviesReviewed.push_back(teste);
             }
-            teste.movie.rating = current->movie.rating;
-            teste.userRating = teste.movie.rating;
-
-            allMoviesReviewed.push_back(teste);
+            
         }
 
     }
 
     quickSortMovies(allMoviesReviewed, 0, allMoviesReviewed.size()-1);
 
-    for(int i = 0; i < topX && i <= response.size(); i++){
+    for(int i = 0; i < topX && i < allMoviesReviewed.size(); i++){
         response.push_back(allMoviesReviewed.at(i));
-        cout << i+1 << " - FILME: " << response.at(i).movie.movieId << " -> RATING: " << response.at(i).movie.rating << endl;
     }
     
+    return response;
+}
+
+vector<MovieReviewed> orderByRatingMoviesFilteredByPrefix(vector<Movie>& moviesFiltered){
+    vector<MovieReviewed> response;
+    for(int i = 0; i < moviesFiltered.size(); i++){
+        MovieReviewed movieReviewed;
+        movieReviewed.movie = moviesFiltered.at(i);
+        movieReviewed.userRating = moviesFiltered.at(i).rating;
+        response.push_back(movieReviewed);
+    }
+
+    quickSortMovies(response, 0, response.size()-1);
 
     return response;
+}
+
+vector<string> getUserCommand(int& programStage){
+    vector<string> stringVector;
+    do{
+        cout << "Digite um comando:" << endl;
+        string temp;
+        getline(cin, temp);
+        const string command = temp;
+
+        stringVector = splitStringIntoNewVectorBySeparator(command, " ");
+
+        if(stringVector.at(0) == PREFIX_EXIT || command == PREFIX_EXIT){
+            programStage = EXIT_COMMAND;
+
+        } else if(stringVector.at(0) == PREFIX_SEARCH_ONE){
+            cout << "BUSCA POR " << PREFIX_SEARCH_ONE << endl;
+            programStage = GET_PREFIX_SEARCH;
+
+        } else if(stringVector.at(0) == PREFIX_SEARCH_TWO){
+            cout << "BUSCA POR " << PREFIX_SEARCH_TWO << endl;
+            programStage = GET_USER_SEARCH;
+        
+        } else if(stringVector.at(0) == PREFIX_SEARCH_THREE){
+            cout << "BUSCA POR " << PREFIX_SEARCH_THREE << endl;
+            programStage = GET_TOP_GENRE_SEARCH;
+
+        } else if(stringVector.at(0) == PREFIX_SEARCH_FOUR){
+            cout << "BUSCA POR " << PREFIX_SEARCH_FOUR << endl;
+            programStage = GET_TAGS_SEARCH;
+
+        } else {
+            cout << "COMANDO INVALIDO" << endl;
+        }
+
+    } while (programStage == GET_USER_COMMAND && programStage != EXIT_COMMAND);
+    return stringVector;
 }
