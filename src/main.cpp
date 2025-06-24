@@ -32,19 +32,54 @@ int main(){
   chrono::duration<double> elapsed = end - start;
   cout << "Execution time: " << elapsed.count() << " seconds" << endl;
 
-  //FILTER TREE BY SUFIX
-  const string prefix = "America"; 
-  vector<Movie> movies = searchMoviesByPrefix(movieTree.get(), prefix);
-  //printAllMovieNamesFilteredByPrefix(movies);
+  getAllRatings(allMoviesFromFile, moviesHashTable);
 
-  //FILTER TAGS TREE 
-  const string tagName = "'feel-good' 'predictable'";
-  searchByTags(tagTree, tagName, moviesHashTable);
-  printTop20RatingsByUserID(usersHashTable, moviesHashTable, 54766);
+  int programStage = GET_USER_COMMAND;
 
-  //FILTER MOVIES BY GENRE
-  const string genre = "Animation";
-  vector<MovieReviewed> topXmoviesFilteredByGenre = filterMoviesByGenre(allMoviesFromFile, moviesHashTable, genre, 20);
+  do{
+    vector<string> stringVector = getUserCommand(programStage);
+    if(programStage != EXIT_COMMAND){
+      
+      if(programStage == GET_PREFIX_SEARCH){
+          if(stringVector.size() >= 2){
+            //FILTER TREE BY SUFIX
+            const string prefix = stringVector.at(1); 
+            vector<Movie> movies = searchMoviesByPrefix(movieTree.get(), prefix);
+            vector<MovieReviewed> moviesOrdened = orderByRatingMoviesFilteredByPrefix(movies);
+            printAllMovieNamesFilteredByPrefix(moviesOrdened);
+          }
+      } else if (programStage == GET_USER_SEARCH){
+          if(stringVector.size() >= 2){
+            int id = stoi(stringVector.at(1));
+            printTop20RatingsByUserID(usersHashTable, moviesHashTable, id);
+          }
 
+      } else if (programStage == GET_TOP_GENRE_SEARCH){
+          if(stringVector.size() >= 3){
+            //FILTER TOP X MOVIES BY GENRE
+            int topX = stoi(stringVector.at(1));
+            const string genre = stringVector.at(2);
+            vector<MovieReviewed> topXmoviesFilteredByGenre = filterMoviesByGenre(allMoviesFromFile, moviesHashTable, genre, topX);
+            printTopXMoviesByGenre(topXmoviesFilteredByGenre, topX);
+          }
+
+      }else if (programStage == GET_TAGS_SEARCH){
+        if(stringVector.size() >= 2){
+          //FILTER TAGS TREE 
+          string tagName = "";
+          for(int i = 1; i < stringVector.size(); i++){
+            tagName = tagName + stringVector.at(i) + 
+            (i+1 != stringVector.size() ? " " : "");
+          }
+
+          searchByTags(tagTree, tagName, moviesHashTable);
+        }
+      }
+
+    }
+  } while (programStage != EXIT_COMMAND);
+
+  cout << "End of the Movie Review System!" << endl;
+ 
   return 0;
 }

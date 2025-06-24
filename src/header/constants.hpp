@@ -17,6 +17,20 @@
 #define RATINGS_FILE_BIG_DATA "./datas/dados-completo/ratings.csv"
 #define TAGS_FILE_BIG_DATA "./datas/dados-completo/tags.csv"
 
+//SEARCH
+#define PREFIX_EXIT "exit"
+#define PREFIX_SEARCH_ONE "prefixo"
+#define PREFIX_SEARCH_TWO "user"
+#define PREFIX_SEARCH_THREE "top"
+#define PREFIX_SEARCH_FOUR "tags"
+
+#define EXIT_COMMAND -1
+#define GET_USER_COMMAND 0
+#define GET_PREFIX_SEARCH 1
+#define GET_USER_SEARCH 2
+#define GET_TOP_GENRE_SEARCH 3
+#define GET_TAGS_SEARCH 4
+
 //UTILS
 #define GENRES_SEPARATION "|"
 #define UPPERCASE_ASCII_START 65
