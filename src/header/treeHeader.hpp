@@ -10,7 +10,8 @@ void insertTST(TernarySearchTree*& node, const Movie& movie, int pos);
 void collectMovies(TernarySearchTree* node, vector<Movie>& results);
 void printAllMovieNamesFilteredByPrefix(vector<Movie> moviesFilteredByPrefix);
 
-
+unique_ptr<TagsTST> setTernarySearchTreeByTags(const vector<Tag>& tags);
+void insertTagsTst(unique_ptr<TagsTST>& node, const Tag& tag, int pos);
 
 #endif
 

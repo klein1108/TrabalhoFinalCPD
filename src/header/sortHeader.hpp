@@ -11,4 +11,8 @@ void secondSort(vector<MovieReviewed>& movieR);
 int partitionMovies(vector<MovieReviewed>& arr, int low, int high);
 void quickSortMovies(vector<MovieReviewed>& movieR, int low, int high);
 
+void quickSort(vector<int>& vec, int low, int high);
+int partition(vector<int>& arr, int low, int high);
+
+
 #endif

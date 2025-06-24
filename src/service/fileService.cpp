@@ -1,5 +1,40 @@
 #include "../header/fileHeader.hpp"
 
+vector<Tag> setAllTagsFromFileToVector() {
+    ifstream f(TAGS_FILE_BIG_DATA);
+    CsvParser parser(f);
+
+    vector<Tag> response;
+    int tagCounting = 0;
+
+    // REMOVE FIRST LINE
+    int NUM_WORDS_TO_REMOVE = 4;
+    for(int i = 0; i < NUM_WORDS_TO_REMOVE; i++){
+        parser.next_field();
+    }
+
+    while (true) {
+        auto field = parser.next_field();
+        if (field.type == FieldType::CSV_END) break;
+        if (field.type != FieldType::DATA) continue;
+
+        Tag tag;
+        tag.userId = stoi(field.data);
+        field = parser.next_field();
+        tag.movieId = stoi(field.data);
+        field = parser.next_field();
+        tag.tag = field.data;
+        field = parser.next_field();
+        tag.timestamp = field.data;
+
+        response.push_back(tag);
+        tagCounting++;
+    }
+
+    cout << "Succeeded mapping all the " << tagCounting << " tags from file!" << endl;
+    return response;
+}
+
 vector<Movie> setAllMoviesFromFileToVector(vector<unique_ptr<MovieHash>>& moviesHashTable){ 
   ifstream f(MOVIE_FILE_BIG_DATA);
   CsvParser parser(f);
@@ -96,7 +131,7 @@ vector<User> setAllReviewsFromFileToVector(vector<unique_ptr<UserHash>>& usersHa
         review.movieId = movieId;
         review.rating = rating;
         review.date = date;
-        addRatintToRatingSum(moviesHashTable, review);
+        addRatingToRatingSum(moviesHashTable, review);
         user.user.reviews.push_back(review);
 
         allRatingCounting++;

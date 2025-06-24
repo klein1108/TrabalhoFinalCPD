@@ -21,7 +21,7 @@ void printAllFileDataByName(char fileName[]){
   
 }
 
-void addRatintToRatingSum(const vector<unique_ptr<MovieHash>>& moviesHashTable, Review review) {
+void addRatingToRatingSum(const vector<unique_ptr<MovieHash>>& moviesHashTable, Review review) {
     int movieId = review.movieId;
     int index = movieId % MAX_MOVIE_HASH;
     MovieHash* current = moviesHashTable[index].get();
@@ -90,7 +90,7 @@ void print20Movies(vector<MovieReviewed> ordenedMovies) {
                  << ", Title: " << movieReviewed.movie.title 
                  << ", Genres: " << movieReviewed.movie.genres
                  << ", Year: " << movieReviewed.movie.year
-                 << ", Global Rating: " << movieReviewed.movie.rating
+                 << ", Global Rating: " << fixed << setprecision(6) << movieReviewed.movie.rating
                  << ", Count: " << movieReviewed.movie.ratingCounting
                  << ", Rating: " << movieReviewed.userRating  
                  << endl;
@@ -107,19 +107,172 @@ void printMovieById(const vector<unique_ptr<MovieHash>>& moviesHashTable, int mo
     MovieHash* current = moviesHashTable[index].get();
     while (current != nullptr) {
         if (current->movie.movieId == movieId) {
-            cout << "Movie ID: " << current->movie.movieId << endl;
-            cout << "Title: " << current->movie.title << endl;
-            cout << "Genres: " << current->movie.genres << endl;
-            cout << "Year: " << current->movie.year << endl;
-            cout << "Average Rating: " << current->movie.rating << endl;
-            cout << "Number of Ratings: " << current->movie.ratingCounting << endl;
-            cout << "------------------------" << endl;
+            cout << current->movie.movieId;
+            cout << "| " << current->movie.title;
+            cout << "| Genres: " << current->movie.genres;
+            cout << "| Year: " << current->movie.year;
+            cout << "| Average Rating: " << fixed << setprecision(6) << current->movie.rating;
+            cout << "| Number of Ratings: " << current->movie.ratingCounting << endl;
             return;
         }
         current = current->next;
     }
     cout << "Movie with ID " << movieId << " not found." << endl;
 }
+
+//TAGS SEARCH FUNCTIONS
+//=======================================================================================================================
+
+void searchByTags(unique_ptr<TagsTST>& root, const string& tagsString, const vector<unique_ptr<MovieHash>>& moviesHashTable) {
+    int numberOfTags = 0;
+    for (char c : tagsString) if (c == '\'') numberOfTags++;
+
+    if (numberOfTags == 0) { //Nao encontrou tags
+        cout << "No tags found in the input string." << endl;
+        return;
+    }
+
+    if( numberOfTags == 1) // Apenas uma tag
+    { 
+      vector<int> moviesWithTag = searchTags(root, tagsString);
+      if (!moviesWithTag.empty()) {
+          printAllTagsFiltered(moviesWithTag, moviesHashTable);
+      } else {
+          cout << "No movies found with the tag: " << tagsString << endl;
+      }
+      return;
+    } else {
+        vector<string> tags = separarPorAspasSimples(tagsString);
+        vector<vector<int>> moviesWithTags;
+        for (const string& tag : tags) {
+            moviesWithTags.push_back(searchTags(root, tag));
+        }
+        vector<int> commonMovies = tagsInCommon(moviesWithTags);
+        if (commonMovies.empty()) {
+            cout << "No movies found with all specified tags." << endl;
+            return;
+        }
+        vector<MovieReviewed> movies = idToMovie(commonMovies, moviesHashTable);
+
+        quickSortMovies(movies, 0, movies.size() - 1);
+
+        for(const auto& movie : movies) printMovieById(moviesHashTable, movie.movie.movieId);
+    }
+}
+
+
+vector<MovieReviewed> idToMovie(const vector<int>& ids, const vector<unique_ptr<MovieHash>>& moviesHashTable) {
+    vector<MovieReviewed> movies;
+    for (int id : ids) {
+        int index = id % MAX_MOVIE_HASH;
+        MovieHash* current = moviesHashTable[index].get();
+        while (current) {
+            if (current->movie.movieId == id) {
+                movies.push_back({current->movie, 0.000f});
+                break;
+            }
+            current = current->next;
+        }
+    }
+    return movies;
+}
+
+vector<int> tagsInCommon(vector<vector<int>> moviesWithTags) {
+    if (moviesWithTags.empty()) return {};
+
+    for(auto& vec : moviesWithTags) {
+        quickSort(vec, 0, vec.size() - 1);
+        auto last = unique(vec.begin(), vec.end()); // remove duplicatas consecutivas
+        vec.erase(last, vec.end()); // apaga elementos repetidos
+    }
+    vector<int> commonMovies = moviesWithTags[0];
+
+    // Intersecta com os demais vetores
+    for (size_t i = 1; i < moviesWithTags.size(); ++i) {
+        vector<int> temp;
+        size_t a = 0, b = 0;
+        while (a < commonMovies.size() && b < moviesWithTags[i].size()) {
+            if (commonMovies[a] < moviesWithTags[i][b]) {
+                ++a;
+            } else if (commonMovies[a] > moviesWithTags[i][b]) {
+                ++b;
+            } else {
+                temp.push_back(commonMovies[a]);
+                ++a;
+                ++b;
+            }
+        }
+        commonMovies = move(temp);
+
+        // Se em algum ponto a interseção estiver vazia, pode parar
+        if (commonMovies.empty()) break;
+    }
+    
+    return commonMovies;
+}
+
+vector<string> separarPorAspasSimples(const string& input) {
+    vector<string> resultado;
+    bool dentroDeAspas = false;
+    string palavraAtual;
+
+    for (char c : input) {
+        if (c == '\'') {
+            if (dentroDeAspas) {
+                // Fecha uma palavra
+                resultado.push_back(palavraAtual);
+                palavraAtual.clear();
+            }
+            // Alterna o estado
+            dentroDeAspas = !dentroDeAspas;
+        } else if (dentroDeAspas) {
+            palavraAtual += c;
+        }
+    }
+
+    return resultado;
+}
+
+// Função de busca por prefixo na TST de tags
+vector<int> searchTags(unique_ptr<TagsTST>& root, const string& word) {
+  TagsTST* node = root.get();
+  int pos = 0;
+
+  while (node && pos < word.size()) {
+    char c = tolower(word[pos]);
+
+    if (c < node->letter) {
+      node = node->left.get();
+    } else if (c > node->letter) {
+      node = node->right.get();
+    } else {
+      pos++;
+      if (pos == word.size()) break;
+      node = node->next.get();
+    }
+  }
+
+  if (node && node->leafFlag && pos == word.size()) {
+    return node->movieIds;
+  }
+
+  return {};
+}
+
+// Função para imprimir todas as tags filtradas
+void printAllTagsFiltered(const vector<int>& moviesWithTag, const vector<unique_ptr<MovieHash>>& moviesHashTable) {
+  for (int movieId : moviesWithTag) {
+      int index = movieId % MAX_MOVIE_HASH;
+      MovieHash* current = moviesHashTable[index].get();
+      while (current) {
+          if (current->movie.movieId == movieId) {
+              const Movie& movie = current->movie;
+              cout << "Movie ID: " << movieId << " | Title: " << movie.title << " | Genres: " << movie.genres << endl;
+              break;
+          }
+          current = current->next;
+      }
+  }
 
 vector<MovieReviewed> filterMoviesByGenre(vector<Movie>& allMovies, vector<unique_ptr<MovieHash>>& movieHash, const string genre, int topX){
     vector<MovieReviewed> allMoviesReviewed;
