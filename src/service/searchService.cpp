@@ -273,6 +273,7 @@ void printAllTagsFiltered(const vector<int>& moviesWithTag, const vector<unique_
           current = current->next;
       }
   }
+}
 
 vector<MovieReviewed> filterMoviesByGenre(vector<Movie>& allMovies, vector<unique_ptr<MovieHash>>& movieHash, const string genre, int topX){
     vector<MovieReviewed> allMoviesReviewed;
