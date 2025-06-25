@@ -39,15 +39,20 @@ void addRatingToRatingSum(const vector<unique_ptr<MovieHash>>& moviesHashTable, 
 //PRINT FUNCTIONS
 
 void printTopXMoviesByGenre(vector<MovieReviewed>& movieReviewed, int& topX){
+    cout << right << setw(6) << "ID" 
+         << "| " << left << setw(50) << "Title" 
+         << "| " << left << setw(50) << "Genres" 
+         << "| " << left << setw(5) << "Year" 
+         << "| " << left << setw(15) << "Average Rating" 
+         << "| " << left << setw(20) << "Number of Ratings" 
+         << endl;
     for(int i = 0; i < topX && i < movieReviewed.size(); i++){
-        cout << "Movie ID: " << movieReviewed.at(i).movie.movieId 
-                 << ", Title: " << movieReviewed.at(i).movie.title 
-                 << ", Genres: " << movieReviewed.at(i).movie.genres
-                 << ", Year: " << movieReviewed.at(i).movie.year
-                 << ", Global Rating: " << fixed << setprecision(6) << movieReviewed.at(i).movie.rating
-                 << ", Count: " << movieReviewed.at(i).movie.ratingCounting
-                 << ", Rating: " << movieReviewed.at(i).userRating  
-                 << endl;
+        cout << right << setw(6) << movieReviewed.at(i).movie.movieId << "| " 
+             << left << setw(50) << movieReviewed.at(i).movie.title.substr(0, 50) << "| " 
+             << left << setw(50) << movieReviewed.at(i).movie.genres << "| " 
+             << left << setw(5) << movieReviewed.at(i).movie.year << "| " 
+             << left << setw(15) << fixed << setprecision(6) << movieReviewed.at(i).movie.rating << "| " 
+             << left << setw(20) << fixed << setprecision(0) << movieReviewed.at(i).movie.ratingCounting << endl;
     }
 }
 
@@ -97,16 +102,24 @@ void printUserById(const vector<unique_ptr<UserHash>>& usersHashTable, int searc
 
 void print20Movies(vector<MovieReviewed> ordenedMovies) {
     int count = 0;
+    cout << right << setw(6) << "ID" 
+         << "| " << left << setw(50) << "Title" 
+         << "| " << left << setw(50) << "Genres" 
+         << "| " << left << setw(5) << "Year" 
+         << "| " << left << setw(15) << "Average Rating" 
+         << "| " << left << setw(20) << "Number of Ratings" 
+         << "| " << left << setw(10) << "User Rating"
+         << endl;
     for (const auto& movieReviewed : ordenedMovies) {
         if (count < 20) {
-            cout << "Movie ID: " << movieReviewed.movie.movieId 
-                 << ", Title: " << movieReviewed.movie.title 
-                 << ", Genres: " << movieReviewed.movie.genres
-                 << ", Year: " << movieReviewed.movie.year
-                 << ", Global Rating: " << fixed << setprecision(6) << movieReviewed.movie.rating
-                 << ", Count: " << movieReviewed.movie.ratingCounting
-                 << ", Rating: " << movieReviewed.userRating  
-                 << endl;
+            cout << right << setw(6) << movieReviewed.movie.movieId;
+            cout << "| " << left << setw(50) << movieReviewed.movie.title.substr(0, 50);
+            cout << "| " << left << setw(50) << movieReviewed.movie.genres;
+            cout << "| " << left << setw(5) << movieReviewed.movie.year;
+            cout << "| " << left << setw(15) << fixed << setprecision(6) << movieReviewed.movie.rating;
+            cout << "| " << left << setw(20) << fixed << setprecision(0) << movieReviewed.movie.ratingCounting;
+            cout << "| " << left << setw(10) << fixed << setprecision(1) << movieReviewed.userRating;
+            cout << endl;
             count++;
         } else {
             break; // Stop after printing 20 movies
@@ -120,12 +133,13 @@ void printMovieById(const vector<unique_ptr<MovieHash>>& moviesHashTable, int mo
     MovieHash* current = moviesHashTable[index].get();
     while (current != nullptr) {
         if (current->movie.movieId == movieId) {
-            cout << current->movie.movieId;
-            cout << "| " << current->movie.title;
-            cout << "| Genres: " << current->movie.genres;
-            cout << "| Year: " << current->movie.year;
-            cout << "| Average Rating: " << fixed << setprecision(6) << current->movie.rating;
-            cout << "| Number of Ratings: " << current->movie.ratingCounting << endl;
+            cout << right << setw(6) << current->movie.movieId;
+            cout << "| " << left << setw(50) << current->movie.title.substr(0, 50);
+            cout << "| " << left << setw(50) << current->movie.genres;
+            cout << "| " << left << setw(5) << current->movie.year;
+            cout << "| " << left << setw(15) << fixed << setprecision(6) << current->movie.rating;
+            cout << "| " << left << setw(20) << fixed << setprecision(0) << current->movie.ratingCounting;
+            cout << endl;
             return;
         }
         current = current->next;
@@ -169,6 +183,13 @@ void searchByTags(unique_ptr<TagsTST>& root, const string& tagsString, const vec
 
         quickSortMovies(movies, 0, movies.size() - 1);
 
+        cout << right << setw(6) << "ID" 
+             << "| " << left << setw(50) << "Title" 
+             << "| " << left << setw(50) << "Genres" 
+             << "| " << left << setw(5) << "Year" 
+             << "| " << left << setw(15) << "Average Rating" 
+             << "| " << left << setw(20) << "Number of Ratings" 
+             << endl;
         for(const auto& movie : movies) printMovieById(moviesHashTable, movie.movie.movieId);
     }
 }
@@ -274,13 +295,25 @@ vector<int> searchTags(unique_ptr<TagsTST>& root, const string& word) {
 
 // Função para imprimir todas as tags filtradas
 void printAllTagsFiltered(const vector<int>& moviesWithTag, const vector<unique_ptr<MovieHash>>& moviesHashTable) {
-  for (int movieId : moviesWithTag) {
+    cout << right << setw(6) << "ID" 
+         << "| " << left << setw(50) << "Title" 
+         << "| " << left << setw(50) << "Genres" 
+         << "| " << left << setw(5) << "Year" 
+         << "| " << left << setw(15) << "Average Rating" 
+         << "| " << left << setw(20) << "Number of Ratings" 
+         << endl;
+    for (int movieId : moviesWithTag) {
       int index = movieId % MAX_MOVIE_HASH;
       MovieHash* current = moviesHashTable[index].get();
       while (current) {
           if (current->movie.movieId == movieId) {
               const Movie& movie = current->movie;
-              cout << "Movie ID: " << movieId << " | Title: " << movie.title << " | Genres: " << movie.genres << endl;
+              cout << right << setw(6) << movieId << "| "
+                   << left << setw(50) << movie.title.substr(0, 50) << "| "
+                   << left << setw(50) << movie.genres << "| "
+                   << left << setw(5) << movie.year << "| "
+                   << left << setw(15) << fixed << setprecision(6) << movie.rating << "| "
+                   << left << setw(20) << fixed << setprecision(0) << movie.ratingCounting << endl;
               break;
           }
           current = current->next;

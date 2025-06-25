@@ -88,13 +88,21 @@ vector<Movie> searchMoviesByPrefix(TernarySearchTree* root, const string& prefix
 }
 
 void printAllMovieNamesFilteredByPrefix(vector<MovieReviewed> moviesFilteredByPrefix){
-
+  cout << right << setw(6) << "ID" 
+         << "| " << left << setw(50) << "Title" 
+         << "| " << left << setw(50) << "Genres" 
+         << "| " << left << setw(5) << "Year" 
+         << "| " << left << setw(15) << "Average Rating" 
+         << "| " << left << setw(20) << "Number of Ratings" 
+         << endl;
   for (const auto& movieFiltered : moviesFilteredByPrefix) {
-    cout << movieFiltered.movie.movieId << " | " 
-    << movieFiltered.movie.title << " | " 
-    << movieFiltered.movie.genres << " | " 
-    << movieFiltered.movie.year << " | " 
-    << endl;
+    cout << right << setw(6) << movieFiltered.movie.movieId << "| " 
+         << left << setw(50) << movieFiltered.movie.title.substr(0, 50) << "| " 
+         << left << setw(50) << movieFiltered.movie.genres << "| " 
+         << left << setw(5) << movieFiltered.movie.year << "| " 
+         << left << setw(15) << fixed << setprecision(6) << movieFiltered.movie.rating << "| " 
+         << left << setw(20) << fixed << setprecision(0) << movieFiltered.movie.ratingCounting;
+    cout << endl; 
   }
 }
 
